@@ -1,0 +1,37 @@
+services:
+  performiq-postgres:
+    image: postgres:17
+    container_name: performiq-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-performiq_db}
+      POSTGRES_USER: ${POSTGRES_USER:-performiq_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-performiq_pass}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - performiq_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-performiq_user} -d ${POSTGRES_DB:-performiq_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: performiq-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@performiq.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    depends_on:
+      performiq-postgres:
+        condition: service_healthy
+    profiles:
+      - tools
+
+volumes:
+  performiq_pgdata:
+    driver: local

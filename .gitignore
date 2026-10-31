@@ -1,0 +1,48 @@
+# =============================================
+# PerformIQ - Root .gitignore
+# =============================================
+
+# --- Environment ---
+.env
+*.env.local
+
+# --- IDE ---
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.project
+.classpath
+.settings/
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Java / Maven ---
+backend/target/
+backend/*.jar
+backend/*.war
+
+# --- Node / React ---
+frontend/node_modules/
+frontend/dist/
+frontend/.cache/
+
+# --- Python ---
+data-generator/__pycache__/
+data-generator/**/__pycache__/
+data-generator/*.pyc
+data-generator/.venv/
+data-generator/venv/
+data-generator/output/*.csv
+data-generator/output/*.json
+!data-generator/output/.gitkeep
+
+# --- Docker ---
+docker-compose.override.yml
+
+# --- Generated data (keep gitkeep, ignore generated files) ---
+*.log

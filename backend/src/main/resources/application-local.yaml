@@ -1,0 +1,45 @@
+spring:
+  application:
+    name: performiq-backend-local
+
+  # In-memory H2 PostgreSQL mode for zero-dependency local run
+  datasource:
+    url: jdbc:h2:mem:performiq_db;DB_CLOSE_DELAY=-1;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+    hikari:
+      maximum-pool-size: 10
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
+    open-in-view: true
+    show-sql: false
+
+  flyway:
+    enabled: false
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api/v1
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+app:
+  jwt:
+    secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+    expiration-ms: 86400000
+  data-import:
+    directory: ../data-generator/output
+
+logging:
+  level:
+    com.performiq: INFO
+    org.springframework.security: WARN
