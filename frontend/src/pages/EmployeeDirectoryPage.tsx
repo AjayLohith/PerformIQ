@@ -440,7 +440,7 @@ export const EmployeeDirectoryPage: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
           <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-gray-200 animate-in fade-in zoom-in-95 duration-150 overflow-hidden">
             {/* Header Banner */}
-            <div className="bg-gradient-to-r from-slate-900 to-indigo-900 p-6 text-white relative">
+            <div className="bg-slate-900 border-b border-slate-800 p-6 text-white relative">
               <button
                 onClick={() => setInspectingEmployee(null)}
                 className="absolute top-4 right-4 p-1.5 text-white/80 hover:text-white rounded-lg hover:bg-white/10 transition cursor-pointer"

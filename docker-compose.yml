@@ -7,8 +7,9 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-performiq_db}
       POSTGRES_USER: ${POSTGRES_USER:-performiq_user}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-performiq_pass}
+      TZ: UTC
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - "${POSTGRES_PORT:-5433}:5432"
     volumes:
       - performiq_pgdata:/var/lib/postgresql/data
     healthcheck:

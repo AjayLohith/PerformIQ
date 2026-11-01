@@ -13,6 +13,7 @@ import java.util.UUID;
 @Repository
 public interface AppUserRepository extends JpaRepository<AppUser, UUID> {
     Optional<AppUser> findByUsername(String username);
+    Optional<AppUser> findByUsernameIgnoreCase(String username);
     Optional<AppUser> findByEmployeeId(UUID employeeId);
     boolean existsByUsername(String username);
     Page<AppUser> findByRole(UserRole role, Pageable pageable);

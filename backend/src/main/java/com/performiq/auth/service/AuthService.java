@@ -26,9 +26,10 @@ public class AuthService {
 
     @Transactional(readOnly = true)
     public LoginResponseDto login(LoginRequestDto request) {
-        String lookup = request.getUsername();
-        AppUser user = appUserRepository.findByUsername(lookup)
-                .or(() -> !lookup.contains("@") ? appUserRepository.findByUsername(lookup + "@performiq.com") : java.util.Optional.empty())
+        String lookup = request.getUsername() != null ? request.getUsername().trim() : "";
+        AppUser user = appUserRepository.findByUsernameIgnoreCase(lookup)
+                .or(() -> !lookup.contains("@") ? appUserRepository.findByUsernameIgnoreCase(lookup + "@performiq.com") : java.util.Optional.empty())
+                .or(() -> lookup.contains("@") ? appUserRepository.findByUsernameIgnoreCase(lookup.substring(0, lookup.indexOf('@'))) : java.util.Optional.empty())
                 .orElseThrow(() -> new BadRequestException("Invalid username or password"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
@@ -53,9 +54,10 @@ public class AuthService {
 
     @Transactional(readOnly = true)
     public UserProfileDto getCurrentUser(String username) {
-        String lookup = username;
-        AppUser user = appUserRepository.findByUsername(lookup)
-                .or(() -> !lookup.contains("@") ? appUserRepository.findByUsername(lookup + "@performiq.com") : java.util.Optional.empty())
+        String lookup = username != null ? username.trim() : "";
+        AppUser user = appUserRepository.findByUsernameIgnoreCase(lookup)
+                .or(() -> !lookup.contains("@") ? appUserRepository.findByUsernameIgnoreCase(lookup + "@performiq.com") : java.util.Optional.empty())
+                .or(() -> lookup.contains("@") ? appUserRepository.findByUsernameIgnoreCase(lookup.substring(0, lookup.indexOf('@'))) : java.util.Optional.empty())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found: " + username));
 
         return UserProfileDto.builder()
