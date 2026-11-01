@@ -71,8 +71,12 @@ public class GoalService {
         BigDecimal validatedWeight = weight != null ? weight : new BigDecimal("25.00");
         validateGoalWeights(employeeId, reviewCycleId, validatedWeight, null);
 
+        String finalBusinessId = (businessId != null && !businessId.isBlank())
+                ? businessId
+                : "GOL-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+
         Goal goal = Goal.builder()
-                .businessId(businessId)
+                .businessId(finalBusinessId)
                 .employee(emp)
                 .reviewCycle(cycle)
                 .title(title)

@@ -360,20 +360,6 @@ export const DashboardPage: React.FC<DashboardProps> = ({ onNavigate }) => {
               </button>
             </div>
           </div>
-
-          {/* Audit & Compliance Card */}
-          <div className="bg-slate-900 text-white p-5 rounded-xl shadow-xs">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">
-              Data & Audit Integrity
-            </h4>
-            <p className="text-xs text-slate-300 mt-1">
-              Every status transition, metric change, and review rating is cryptographically audited and logged in PostgreSQL.
-            </p>
-            <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
-              <span>Database Engine: PostgreSQL 17</span>
-              <span className="text-emerald-400 font-bold">SHA-256 Verified</span>
-            </div>
-          </div>
         </div>
       </div>
     </div>

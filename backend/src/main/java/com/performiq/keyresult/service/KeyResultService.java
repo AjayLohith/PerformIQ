@@ -79,7 +79,7 @@ public class KeyResultService {
         BigDecimal initialProgress = computeProgress(metricType, startValue, targetValue, initialCurrent);
 
         KeyResult kr = KeyResult.builder()
-                .businessId(businessId != null ? businessId : "KR-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase())
+                .businessId(businessId != null && !businessId.isBlank() ? businessId : "KR-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase())
                 .goal(goal)
                 .title(title)
                 .metricType(metricType)

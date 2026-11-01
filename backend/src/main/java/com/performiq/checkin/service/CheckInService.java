@@ -63,7 +63,7 @@ public class CheckInService {
                 : goal.getProgress();
 
         CheckIn checkIn = CheckIn.builder()
-                .businessId(businessId != null ? businessId : "CHK-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase())
+                .businessId(businessId != null && !businessId.isBlank() ? businessId : "CHK-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase())
                 .goal(goal)
                 .employee(employee)
                 .notes(notes)
@@ -77,7 +77,7 @@ public class CheckInService {
         if (evidenceList != null && !evidenceList.isEmpty()) {
             for (EvidenceDto ed : evidenceList) {
                 Evidence ev = Evidence.builder()
-                        .businessId(ed.getBusinessId() != null ? ed.getBusinessId() : "EVI-" + UUID.randomUUID().toString().substring(0, 8))
+                        .businessId(ed.getBusinessId() != null && !ed.getBusinessId().isBlank() ? ed.getBusinessId() : "EVI-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase())
                         .checkIn(savedCheckIn)
                         .title(ed.getTitle())
                         .url(ed.getUrl())

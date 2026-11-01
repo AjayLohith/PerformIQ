@@ -34,7 +34,10 @@ export const CheckInsPage: React.FC = () => {
       try {
         const cycle = await reviewCycleApi.getActiveCycle().catch(() => null);
         setActiveCycle(cycle);
-        const gList = await goalApi.getGoals(user.employee.id, cycle?.id);
+        let gList = await goalApi.getGoals(user.employee.id, cycle?.id);
+        if (gList.length === 0) {
+          gList = await goalApi.getGoals(user.employee.id);
+        }
         setGoals(gList);
         if (gList.length > 0) {
           setSelectedGoalId(gList[0].id);
@@ -85,7 +88,17 @@ export const CheckInsPage: React.FC = () => {
       setNotes('');
       setEvidenceTitle('');
       setEvidenceUrl('');
-      await loadCheckIns(selectedGoalId);
+      setSelectedGoalId(modalGoalId);
+      await loadCheckIns(modalGoalId);
+
+      // Refresh goals list to reflect progress update
+      if (user?.employee?.id) {
+        let refreshedGoals = await goalApi.getGoals(user.employee.id, activeCycle?.id);
+        if (refreshedGoals.length === 0) {
+          refreshedGoals = await goalApi.getGoals(user.employee.id);
+        }
+        setGoals(refreshedGoals);
+      }
     } catch (err: any) {
       alert(err.response?.data?.message || 'Failed to record check-in');
     }
@@ -105,7 +118,10 @@ export const CheckInsPage: React.FC = () => {
         </div>
 
         <button
-          onClick={() => setShowLogModal(true)}
+          onClick={() => {
+            setModalGoalId(selectedGoalId || goals[0]?.id || '');
+            setShowLogModal(true);
+          }}
           className="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center space-x-1.5 transition cursor-pointer"
         >
           <Plus className="w-4 h-4" />
@@ -203,17 +219,23 @@ export const CheckInsPage: React.FC = () => {
             <form onSubmit={handleSubmitCheckIn} className="space-y-4">
               <div>
                 <label className="block text-xs font-semibold text-gray-700 mb-1">Target Goal</label>
-                <select
-                  value={modalGoalId}
-                  onChange={(e) => setModalGoalId(e.target.value)}
-                  className="w-full text-xs px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-                >
-                  {goals.map((g) => (
-                    <option key={g.id} value={g.id}>
-                      {g.businessId} — {g.title}
-                    </option>
-                  ))}
-                </select>
+                {goals.length === 0 ? (
+                  <p className="text-xs text-amber-700 bg-amber-50 p-2.5 rounded-lg border border-amber-200">
+                    No active goals found. Please create a goal in the Goals section before logging a check-in.
+                  </p>
+                ) : (
+                  <select
+                    value={modalGoalId}
+                    onChange={(e) => setModalGoalId(e.target.value)}
+                    className="w-full text-xs px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                  >
+                    {goals.map((g) => (
+                      <option key={g.id} value={g.id}>
+                        {g.businessId} — {g.title}
+                      </option>
+                    ))}
+                  </select>
+                )}
               </div>
 
               <div>
@@ -278,7 +300,8 @@ export const CheckInsPage: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold transition cursor-pointer"
+                  disabled={goals.length === 0 || !modalGoalId}
+                  className="px-4 py-2 bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white rounded-lg text-xs font-semibold transition cursor-pointer"
                 >
                   Save Check-in
                 </button>

@@ -61,7 +61,7 @@ public class ReviewService {
         }
 
         Review review = Review.builder()
-                .businessId(businessId != null ? businessId : "REV-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase())
+                .businessId(businessId != null && !businessId.isBlank() ? businessId : "REV-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase())
                 .employee(employee)
                 .reviewer(reviewer)
                 .reviewCycle(cycle)

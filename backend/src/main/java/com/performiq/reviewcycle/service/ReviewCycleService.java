@@ -42,7 +42,7 @@ public class ReviewCycleService {
         }
 
         ReviewCycle cycle = ReviewCycle.builder()
-                .businessId(businessId != null ? businessId : "CYCLE-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase())
+                .businessId(businessId != null && !businessId.isBlank() ? businessId : "CYCLE-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase())
                 .name(name)
                 .description(description)
                 .startDate(startDate)

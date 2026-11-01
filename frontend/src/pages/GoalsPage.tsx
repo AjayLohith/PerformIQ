@@ -98,7 +98,11 @@ export const GoalsPage: React.FC = () => {
 
   const handleCreateGoal = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user?.employee?.id || !activeCycle?.id) return;
+    if (!user?.employee?.id) return;
+    if (!activeCycle?.id) {
+      setErrorMsg('No active review cycle found. An active cycle is required to create goals.');
+      return;
+    }
     setIsSubmitting(true);
     setErrorMsg(null);
     try {
@@ -173,7 +177,10 @@ export const GoalsPage: React.FC = () => {
           </div>
 
           <button
-            onClick={() => setShowCreateGoalModal(true)}
+            onClick={() => {
+              setErrorMsg(null);
+              setShowCreateGoalModal(true);
+            }}
             className="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center space-x-1.5 transition cursor-pointer"
           >
             <Plus className="w-4 h-4" />
