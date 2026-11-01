@@ -15,7 +15,7 @@ An enterprise modular monolith for high-velocity organizations to manage perform
 [![Tests](https://img.shields.io/badge/Tests-15%2F15%20Passing-brightgreen?style=flat-square)](backend)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 
-[Features](#key-features) • [Quick Start](#quick-start) • [Demo Accounts](#demo-personas--role-access) • [Architecture](#architecture) • [Business Rules](#core-business-logic) • [Project Structure](#project-structure)
+[Features](#key-features) • [Quick Start](#quick-start) • [Demo Accounts](#demo-personas--role-access) • [Project Structure](#project-structure) • [Architecture](#architecture) • [Business Rules](#core-business-logic) • [Testing](#testing--quality-assurance)
 
 </div>
 
@@ -23,24 +23,16 @@ An enterprise modular monolith for high-velocity organizations to manage perform
 
 ## Overview
 
-**PerformIQ** bridges high-level organizational OKRs with ground-level career development. Engineered with strict relational constraints, transactional business rules, and an append-only audit ledger, PerformIQ provides complete traceability across the employee review lifecycle.
+**PerformIQ** bridges organizational OKRs with ground-level career development. Built with relational constraints, transactional business rules, and an audit ledger, PerformIQ provides full traceability across the employee review lifecycle.
 
 ```mermaid
 flowchart LR
-    A[Review Cycle<br/>DRAFT] --> B[Cycle Active<br/>Goal Setting]
-    B --> C[Check-Ins &<br/>Key Result Updates]
-    C --> D[360 Feedback<br/>Self, Peer, Manager]
-    D --> E[Review Scoring<br/>60% OKR + 40% Feedback]
-    E --> F[Development Plan<br/>Approval Workflow]
-    F --> G[Cycle Closed<br/>Audit Sealed]
-    
-    style A fill:#e2e8f0,stroke:#64748b,stroke-width:1px
-    style B fill:#dbeafe,stroke:#3b82f6,stroke-width:1px
-    style C fill:#ede9fe,stroke:#8b5cf6,stroke-width:1px
-    style D fill:#fce7f3,stroke:#ec4899,stroke-width:1px
-    style E fill:#fef3c7,stroke:#f59e0b,stroke-width:1px
-    style F fill:#d1fae5,stroke:#10b981,stroke-width:1px
-    style G fill:#f1f5f9,stroke:#475569,stroke-width:1px
+    A["Review Cycle (DRAFT)"] --> B["Cycle Active (Goal Setting)"]
+    B --> C["Check-Ins & KR Updates"]
+    C --> D["360 Feedback (Self, Peer, Manager)"]
+    D --> E["Review Scoring (60% OKR + 40% Feedback)"]
+    E --> F["Development Plan (Approval Workflow)"]
+    F --> G["Cycle Closed (Audit Sealed)"]
 ```
 
 ---
@@ -89,7 +81,7 @@ For production environments with containerized PostgreSQL 17:
 # Start PostgreSQL Container
 docker compose up -d
 
-# Run Backend (Flyway automatically executes migrations V2 & V3)
+# Run Backend (Flyway automatically executes migrations V1–V4)
 cd backend
 ./mvnw spring-boot:run
 
@@ -114,49 +106,55 @@ PerformIQ provides a **1-Click Demo Persona Switcher** on the login page and top
 
 ---
 
+## Project Structure
+
+Click on any directory or file below to jump directly to it:
+
+- 📦 [**`backend/`**](backend/) — Spring Boot 4.1.2 & Java 21 REST API Monolith
+  - 📂 [`src/main/java/com/performiq/`](backend/src/main/java/com/performiq/) — Domain packages
+    - 📁 [`audit/`](backend/src/main/java/com/performiq/audit/) — Transactional audit trail & ledger
+    - 📁 [`auth/`](backend/src/main/java/com/performiq/auth/) — JWT security filter, auth controller & user repository
+    - 📁 [`checkin/`](backend/src/main/java/com/performiq/checkin/) — Milestone check-ins, reflection notes & snapshot history
+    - 📁 [`common/`](backend/src/main/java/com/performiq/common/) — Global exception handling, base entities & standard DTOs
+    - 📁 [`competency/`](backend/src/main/java/com/performiq/competency/) — 8 core competency definitions & rating rubrics
+    - 📁 [`config/`](backend/src/main/java/com/performiq/config/) — Security filter chain, Swagger OpenAPI & local profiles
+    - 📁 [`dataimport/`](backend/src/main/java/com/performiq/dataimport/) — CSV batch data ingestion engine
+    - 📁 [`development/`](backend/src/main/java/com/performiq/development/) — Growth plans & manager coaching approval workflow
+    - 📁 [`employee/`](backend/src/main/java/com/performiq/employee/) — Employee profiles, organizational directory & reporting tree
+    - 📁 [`evidence/`](backend/src/main/java/com/performiq/evidence/) — Milestone deliverables, PR attachments & URL artifacts
+    - 📁 [`feedback/`](backend/src/main/java/com/performiq/feedback/) — 360° multi-rater feedback matrix (Self, Peer, Manager)
+    - 📁 [`goal/`](backend/src/main/java/com/performiq/goal/) — OKR goals, lifecycle state machine & cycle weight validation ($\le 100\%$)
+    - 📁 [`keyresult/`](backend/src/main/java/com/performiq/keyresult/) — INCREASE / DECREASE metrics, target tracking & cascade math
+    - 📁 [`manager/`](backend/src/main/java/com/performiq/manager/) — Manager assignments & team oversight
+    - 📁 [`review/`](backend/src/main/java/com/performiq/review/) — Performance review cycle evaluations & 60/40 composite scoring
+    - 📁 [`reviewcycle/`](backend/src/main/java/com/performiq/reviewcycle/) — Bi-annual review cycles & transition state pipeline
+    - 📁 [`validation/`](backend/src/main/java/com/performiq/validation/) — Data anomaly cases & rule audits
+  - 📂 [`src/main/resources/`](backend/src/main/resources/)
+    - 📁 [`db/migration/`](backend/src/main/resources/db/migration/) — Flyway relational migrations (`V1`–`V4`)
+    - 📄 [`application.yaml`](backend/src/main/resources/application.yaml) — PostgreSQL 17 production database configuration
+    - 📄 [`application-local.yaml`](backend/src/main/resources/application-local.yaml) — In-memory H2 configuration
+  - 📂 [`src/test/java/com/performiq/`](backend/src/test/java/com/performiq/) — Test suites (unit, integration & security)
+  - 📄 [`pom.xml`](backend/pom.xml) — Maven project definition & dependency configuration
+- 📦 [**`frontend/`**](frontend/) — React 19 + TypeScript + Vite 6 Single-Page Application
+  - 📂 [`src/components/`](frontend/src/components/) — Layout, Sidebar, Navbar, and persona switcher
+  - 📂 [`src/context/`](frontend/src/context/) — Authentication context & JWT session storage
+  - 📂 [`src/pages/`](frontend/src/pages/) — Role-tailored dashboards, OKR tracker, 360 feedback & development plans
+  - 📂 [`src/services/`](frontend/src/services/) — Axios HTTP client & REST API endpoints
+  - 📂 [`src/types/`](frontend/src/types/) — TypeScript models & DTOs
+  - 📄 [`package.json`](frontend/package.json) — Frontend dependencies & scripts
+  - 📄 [`vite.config.ts`](frontend/vite.config.ts) — Vite build and API reverse-proxy configuration
+- 📦 [**`data-generator/`**](data-generator/) — Python synthetic dataset generator with anomaly injection
+  - 📂 [`generator/`](data-generator/generator/) — DAG dependency generator & anomaly injector
+  - 📂 [`output/`](data-generator/output/) — Generated benchmark datasets & signed manifest
+- 📦 [**`docs/`**](docs/) — Architecture diagrams, database schemas, and API documentation
+- 📄 [**`docker-compose.yml`**](docker-compose.yml) — PostgreSQL 17 database container
+- 📄 [**`.env.example`**](.env.example) — Template environment variables
+
+---
+
 ## Architecture
 
-PerformIQ employs a **Modular Monolith** architecture organized package-by-feature under `com.performiq.*`:
-
-```
-PerformIQ/
-├── backend/                        # Spring Boot 4.1.2 + Java 21 Monolith
-│   ├── src/main/java/com/performiq/
-│   │   ├── audit/                  # Audit trail and event logging
-│   │   ├── auth/                   # JWT provider, security filter, auth endpoints
-│   │   ├── checkin/                # Periodic check-ins and progress snapshots
-│   │   ├── common/                 # Global exceptions, base entities, utilities
-│   │   ├── competency/             # Core competency rubrics
-│   │   ├── config/                 # Security, OpenAPI, and profile configs
-│   │   ├── dataimport/             # Topological CSV/JSON batch ingestion
-│   │   ├── development/            # Career growth plans & approval state machine
-│   │   ├── employee/               # Profiles, directory, and organizational tree
-│   │   ├── evidence/               # Deliverables, URLs, and code PR attachments
-│   │   ├── feedback/               # 360 multi-rater feedback matrix
-│   │   ├── goal/                   # OKR goals, cycle weight validator, history
-│   │   ├── keyresult/              # Metric calculations and cascade math
-│   │   ├── manager/                # Manager hierarchy and assignment history
-│   │   ├── review/                 # Performance reviews and composite ratings
-│   │   ├── reviewcycle/            # Bi-annual review cycles and state pipeline
-│   │   └── validation/             # Domain rule checks and anomaly audit
-│   └── src/main/resources/
-│       ├── db/migration/           # Flyway DDL (V2) & Demo Seed (V3)
-│       ├── application.yaml        # PostgreSQL production configuration
-│       └── application-local.yaml  # Zero-docker H2 in-memory profile
-├── frontend/                       # React 19 + TypeScript + Vite 6
-│   ├── src/
-│   │   ├── components/layout/      # Sidebar, Navbar, and persona switcher
-│   │   ├── context/                # Authentication context and token management
-│   │   ├── pages/                  # 12 role-specific enterprise views
-│   │   ├── services/               # Axios client with interceptors
-│   │   └── types/                  # TypeScript domain models matching backend DTOs
-│   └── package.json
-├── data-generator/                 # Python 3.12+ Synthetic Data Generator
-│   ├── generator/                  # DAG dependency generator & anomaly injector
-│   └── output/                     # Generated benchmark datasets & signed manifest
-├── docs/                           # Architecture, schema, and API documentation
-└── docker-compose.yml              # PostgreSQL 17 container definition
-```
+PerformIQ employs a **Modular Monolith** architecture organized package-by-feature under `com.performiq.*`. All domain packages communicate through service interfaces and domain repositories, ensuring low coupling and high cohesion without distributed microservice operational complexity.
 
 ---
 
